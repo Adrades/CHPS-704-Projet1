@@ -1,0 +1,17 @@
+#version 430
+
+in vec3 pos ;
+in vec3 norm ;
+in vec3 uvs ;
+
+uniform vec4 myColor;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 proj;
+
+out vec3 fuvs;
+
+void main (){
+    gl_Position = proj * view * model * vec4(pos, 1.0);
+    fuvs = uvs;
+}
