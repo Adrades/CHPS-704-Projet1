@@ -23,16 +23,20 @@ INCLUDEPATH += $$PWD/src
 
 # --- sources
     SOURCES += \
-    myeffect.cpp \
-        src/TestViewer.cc \
-        src/main.cpp \
-        src/mytexturematerial.cpp
+    src/TestViewer.cc \
+    src/main.cpp \
+    src/mytexturematerial.cpp \
+    src/mycolormaterial.cpp \
+    #src/myphongmaterial.cpp \
+    src/myeffect.cpp
+
 
     HEADERS += \
-    myeffect.h \
-        src/TestViewer.h \
-        src/mytexturematerial.h
-
+    src/TestViewer.h \
+    src/mytexturematerial.h \
+    src/mycolormaterial.h \
+    #src/myphongmaterial.h \
+    src/myeffect.h
 
 
 # --- Ajout des Lib
@@ -62,5 +66,11 @@ win32 {
 
 DISTFILES += \
     data/effect/fragment.txt \
-    data/effect/vertex.txt
+    data/effect/vertex.txt \
+    data/color/fragment.txt \
+    data/color/vertex.txt \
+    data/phong/fragment.txt \
+    data/phong/vertex.txt \
+    data/texture/fragment.txt \
+    data/texture/vertex.txt
 

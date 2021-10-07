@@ -2,6 +2,7 @@
 
 MyEffect::MyEffect(const QString &chemin) : Effect(chemin)
 {
+
 }
 
 void MyEffect::render(FBO *fbo)

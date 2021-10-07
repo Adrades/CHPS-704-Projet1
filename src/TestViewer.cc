@@ -5,7 +5,9 @@
 #include "TextureMaterial.h"
 #include "GridMaterial.h"
 #include "PhongMaterial.h"
+
 #include "mytexturematerial.h"
+#include "myeffect.h"
 
 TestViewer::TestViewer() : QGLShaderViewer ()
 {}
