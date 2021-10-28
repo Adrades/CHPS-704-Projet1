@@ -1,13 +1,19 @@
 #include "TestViewer.h"
 
-
 #include "ColorMaterial.h"
 #include "TextureMaterial.h"
 #include "GridMaterial.h"
 #include "PhongMaterial.h"
 
+//TPs
+//#include "mycolormaterial.h"
 #include "mytexturematerial.h"
-#include "myeffect.h"
+//#include "myeffect.h"
+//#include "myphongmaterial.h"
+
+//Projet
+#include "myevoluedmaterial.h"
+#include "myevoluedeffect.h"
 
 TestViewer::TestViewer() : QGLShaderViewer ()
 {}
@@ -25,9 +31,10 @@ void  TestViewer::init               ()
     getCamera()->setNearAndFar( 0.01, 100 );
     getCamera()->setView(QVector3D(0,0.2,4), QVector3D(0,1,0), QVector3D(0,0,0) );
 
-
+    swapNormal = false;
     fbo = new FBO(width(), height(), GL_RGBA8);
-    myeffect = new MyEffect("./data/effect/");
+//    myeffect = new MyEffect("./data/effect/");
+    myEvoluedEffect = new MyEvoluedEffect("./data/evolvedEffect/");
 
     startAnimation();
 }
@@ -50,7 +57,17 @@ void  TestViewer::createSceneEntities()
 
 
     // mon code
+//    addMaterial("bleu", new myColorMaterial(QVector4D(0.1f,0.1f, 1.0f, 1.0f)));
+//    addMaterial("sol2", new myTextureMaterial(QString(":/textures/sol.jpg")));
+//    addMaterial("myPhong", new myPhongMaterial( QVector4D(0.1f,0.1f,0.1f,1.f),
+//                                                QVector4D(0.1f,0.9f,0.4f,1.f), 128));
+
+
     addMaterial("myFBO", new myTextureMaterial(fbo));
+
+    // Code qui ajoute mon matériel
+    addMaterial("myEvolvedMaterial", new MyEvoluedMaterial(QVector4D(0.1f,0.1f,0.1f,1.f), QVector4D(0.1f,0.9f,0.4f,1.f), 128));
+
     meshCube = new Mesh(getGeometry("cube"), getMaterial("myFBO"));
 
 
@@ -64,31 +81,47 @@ void  TestViewer::createSceneEntities()
 
 
 
+    // Rajout, lapin bleu
+//    mesh = new Mesh( getGeometry("lapin"), getMaterial("bleu") );
+//    addEntityInScene("LapinBleu", mesh );
+//    //mesh->translate(QVector3D(0,0,-2));
+//    mesh->translate(QVector3D(1,1,0));
+
+//    mesh = new Mesh( getGeometry("sol"), getMaterial("sol2") );
+//    addEntityInScene("mySol", mesh );
+//    //mesh->translate(QVector3D(0,0,-2));
+//    mesh->translate(QVector3D(0,-1,0));
+
+    // Cube grillé
+    //mesh = new Mesh( getGeometry("cube"), getMaterial("grid"), true);
+    //addEntityInScene("cubeGrid", mesh );
+
     // Lapin jaune, ex test
-    mesh = new Mesh( getGeometry("lapin"), getMaterial("lapinBlanc"), true );
+    mesh = new Mesh( getGeometry("lapin"), getMaterial("lapinBlanc"), true);
     addEntityInScene("lapinBlanc", mesh );
     mesh->translate(QVector3D(0,1,0));
     mesh->scale(QVector3D(6.0f,6.0f,6.0f));
 
+    // Lapin Evolved
+    mesh = new Mesh(getGeometry("lapin"), getMaterial("myEvolvedMaterial"), true);
+      addEntityInScene("lapinEvolvedAkaTheBigOne", mesh );
+      mesh->scale(QVector3D(16.f,16.f,16.f));
+      mesh->translate(QVector3D(0.5,2,0.5));
 
-    // Cube grillé
-    mesh = new Mesh( getGeometry("cube"), getMaterial("grid"), true );
-    addEntityInScene("cubeGrid", mesh );
+      // Cube Evolved
+      mesh = new Mesh(getGeometry("cube"), getMaterial("myEvolvedMaterial"), true);
+        addEntityInScene("CubeEvolved", mesh );
+        mesh->scale(QVector3D(.6f,.6f,.6f));
+        mesh->translate(QVector3D(0.,-1.,0.));
 
+//    // Lapin Phong
+//    mesh = new Mesh( getGeometry("lapin"), getMaterial("myPhong"), true);
+//     addEntityInScene("lapinPhong", mesh );
+//     mesh->scale(QVector3D(6.f,6.f,6.f));
 
-
-
-
-  // Lapin Phong
-    mesh = new Mesh( getGeometry("lapin"), getMaterial("phong"), true );
-       addEntityInScene("lapinPhong", mesh );
-       mesh->scale(QVector3D(6.f,6.f,6.f));
-
-       m_lights.push_back( PointLight( getCamera()->getPosition() + getCamera()->getRightDir()*4.f, Qt::white ) );
-
-
+     // La lumière spec ajoutée de base dans le tp, possible de la changer pour un meilleur rendu
+     m_lights.push_back( PointLight( getCamera()->getPosition() + getCamera()->getRightDir()*4.f, Qt::white));
 }
-
 
 
 void  TestViewer::animate            ()
@@ -112,19 +145,16 @@ void  TestViewer::drawInformation    ()
     /// TODO - Ajouter l'affichage du texte 2D.
     ///
     int y = 0, dy = 30;
-    drawText(10,  y+=dy, QString(" - truc y(%1), dy(%2)").arg(y).arg(dy), Qt::white, font);
+    drawText(10,  y+=dy, QString("S pour changer la vue"), Qt::white, font);
 }
 
 
 
-void  TestViewer::drawScene          ()
+void  TestViewer::drawScene()
 {
     glEnable(GL_DEPTH_TEST);
      drawMono();
 }
-
-
-
 
 
 // rendu monoscopic
@@ -142,21 +172,20 @@ void TestViewer::drawMono()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //    meshCube->render(getCamera(), m_lights);
-    myeffect->render(fbo);
+//    myeffect->render(fbo);
+    myEvoluedEffect->render(fbo, swapNormal);
 }
 
 
-void  TestViewer::keyPressEvent     (QKeyEvent * event)
+void  TestViewer::keyPressEvent(QKeyEvent * event)
 {
-    switch( event->key() )
+    switch(event->key())
     {
-        case Qt::Key_L : qDebug() << " Vous avez taper la touche L"; break;
+    case Qt::Key_L : qDebug() << " Vous avez taper la touche L"; break;
+    case Qt::Key_S : swapNormal = !swapNormal; break;
 
         default: QGLShaderViewer::keyPressEvent(event); break;
     }
-
     qDebug() << " key : " <<  QKeySequence(event->key()).toString();
-
     update();
-
 }

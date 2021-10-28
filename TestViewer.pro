@@ -25,18 +25,22 @@ INCLUDEPATH += $$PWD/src
     SOURCES += \
     src/TestViewer.cc \
     src/main.cpp \
+    src/myevoluedeffect.cpp \
+    src/myevoluedmaterial.cpp \
     src/mytexturematerial.cpp \
-    src/mycolormaterial.cpp \
-    #src/myphongmaterial.cpp \
-    src/myeffect.cpp
+#    src/mycolormaterial.cpp \
+#    src/myphongmaterial.cpp \
+#    src/myeffect.cpp
 
 
     HEADERS += \
     src/TestViewer.h \
+    src/myevoluedeffect.h \
+    src/myevoluedmaterial.h \
     src/mytexturematerial.h \
-    src/mycolormaterial.h \
-    #src/myphongmaterial.h \
-    src/myeffect.h
+#    src/mycolormaterial.h \
+#    src/myphongmaterial.h \
+#    src/myeffect.h
 
 
 # --- Ajout des Lib
@@ -65,12 +69,16 @@ win32 {
 }
 
 DISTFILES += \
-    data/effect/fragment.txt \
-    data/effect/vertex.txt \
-    data/color/fragment.txt \
-    data/color/vertex.txt \
-    data/phong/fragment.txt \
-    data/phong/vertex.txt \
+#    data/effect/fragment.txt \
+#    data/effect/vertex.txt \
+#    data/color/fragment.txt \
+#    data/color/vertex.txt \
+    data/evolved/fragment.txt \
+    data/evolved/vertex.txt \
+    data/evolvedEffect/fragment.txt \
+    data/evolvedEffect/vertex.txt \
+#    data/phong/fragment.txt \
+#    data/phong/vertex.txt \
     data/texture/fragment.txt \
     data/texture/vertex.txt
 

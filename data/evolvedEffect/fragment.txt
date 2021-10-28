@@ -1,0 +1,65 @@
+#version 430
+
+uniform sampler2D maTexture;
+uniform bool swapNormal;
+
+in vec2 uv;
+
+void main()
+{
+  if(swapNormal){
+      if(uv.x < 0.5){
+        if(uv.y < 0.5){
+            // Bas a gauche
+            vec2 coordRef = vec2(uv.x * 2., uv.y * 2.);
+            vec4 p = texture2D(maTexture, coordRef);
+
+            // Coefficients piques sur stackoverflow https://stackoverflow.com/questions/59143570/whats-the-formula-for-converting-a-rgb-image-to-the-sepia-filter
+            // Ça a l'effet desire, j'ai laisse comme ça
+            float r = 0.393 * p.x + 0.769 * p.y + 0.189 * p.z;
+            float g = 0.349 * p.x  + 0.686 * p.y + 0.168 * p.z;
+            float b = 0.272 * p.x + 0.534 * p.y + 0.131 * p.z;
+
+            gl_FragColor = vec4(r, g, b, 1.0);
+        }else{
+            // Haut a gauche
+            vec2 coordRef = vec2(uv.x * 2., (uv.y-0.5) * 2.);
+            gl_FragColor =  texture2D(maTexture, coordRef);
+        }
+    }else{
+        if(uv.y < 0.5){
+          // Bas a droite
+          vec2 coordRef = vec2((uv.x-0.5) * 2., uv.y * 2.);
+
+          // Copié depuis https://www.it-swarm-fr.com/fr/c%2B%2B/mise-en-oeuvre-du-flou-gaussien-comment-calculer-la-matrice-de-convolution-noyau/941335561/
+          float matrice[25] = {
+              0.0030,    0.0133,    0.0219,    0.0133,    0.0030,
+              0.0133,    0.0596,    0.0983,    0.0596,    0.0133,
+              0.0219,    0.0983,    0.1621,    0.0983,    0.0219,
+              0.0133,    0.0596,    0.0983,    0.0596,    0.0133,
+              0.0030,    0.0133,    0.0219,    0.0133,    0.0030
+          };
+
+          float h = 0.01;
+          vec3 somme = vec3(0.0);
+          vec4 p;
+          for (float i = -2.5; i < 3.; i += 1.) {
+            for (float j = -2.5; j < 3.; j += 1.) {
+              p = texture2D(maTexture, vec2((coordRef.x) + i * h, (coordRef.y) + h * j));
+              somme.x += p.x * matrice[int(i + 2.5) * 5 + int(j + 2.5)];
+              somme.y += p.y * matrice[int(i + 2.5) * 5 + int(j + 2.5)];
+              somme.z += p.z * matrice[int(i + 2.5) * 5 + int(j + 2.5)];
+            }
+          }
+          gl_FragColor =  vec4(somme.x, somme.y, somme.z, 1.); //texture2D(maTexture, coordRef);
+        }else{
+            // Haut a droite
+            vec2 coordRef = vec2((uv.x-0.5)* 2., (uv.y-0.5) * 2.);
+            vec4 p = texture2D(maTexture, coordRef);
+            gl_FragColor =  vec4(1. - p.x, 1. - p.y, 1. - p.z, 1.0);
+        }
+    }
+  } else {
+    gl_FragColor =  texture2D(maTexture, uv.xy);
+  }
+}

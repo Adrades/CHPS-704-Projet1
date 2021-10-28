@@ -13,7 +13,7 @@ out vec3 fuvs;
 out vec3 fpos;
 out mat4 fview;
 
-void main() 
+void main()
 {
     //Calcul de la projection du sommet sur l'écran
     gl_Position = proj*view*model*vec4(pos,1.0);

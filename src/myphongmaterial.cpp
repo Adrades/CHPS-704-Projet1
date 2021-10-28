@@ -1,4 +1,6 @@
 #include "myphongmaterial.h"
+#include "Mesh.h"
+#include <glTexture.h>
 
 myPhongMaterial::myPhongMaterial(const QVector4D &ambient, const QVector4D &diffuse, const float &f)
 {
@@ -25,10 +27,13 @@ void myPhongMaterial::render(const Mesh *mesh, const QGLCamera *c, const QList<P
         bindSpecific(c);
         bindMatrix(c, mesh->getModelMatrix()) ;
 
-        if (lights.length()> 0){
-            setUniformValue("lc", lights[0].getColor());
-            setUniformValue("lp", lights[0].getPosition());
-        }
+        // Informations passées au fragment shader
+        m_program->setUniformValue("ka", ka);
+        m_program->setUniformValue("kd", kd);
+        m_program->setUniformValue("camPos", c->getPosition());
+        m_program->setUniformValue("ks", ks);
+        m_program->setUniformValue("lc", lights[0].getColor());
+        m_program->setUniformValue("lightPos", lights[0].getPosition());
 
         mesh->getGeometry()->binds(attribPos, attribNorm, attribUvs, attribTangents) ;
         mesh->getGeometry()->draw();

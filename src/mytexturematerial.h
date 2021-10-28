@@ -9,6 +9,7 @@ class myTextureMaterial  : public Material
 {
 public:
     myTextureMaterial(FBO *fbo);
+    myTextureMaterial(const QString &texturePath);
 
     ~myTextureMaterial() override;
 
@@ -16,6 +17,8 @@ public:
 
 private:
     FBO *myfbo;
+    glTexture *myTexture;
+    bool is_fbo = false;
 };
 
 #endif // MYTEXTUREMATERIAL_H

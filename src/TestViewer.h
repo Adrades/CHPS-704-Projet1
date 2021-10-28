@@ -8,6 +8,7 @@
 
 #include "QGLShaderViewer.h"
 #include "myeffect.h"
+#include "myevoluedeffect.h"
 
 
 /// ==============================================================
@@ -45,6 +46,8 @@ private:
         FBO *fbo;
         Mesh *meshCube;
         MyEffect *myeffect;
+        MyEvoluedEffect *myEvoluedEffect;
+        bool swapNormal;
 };
 
 #endif // TESTVIEWER_H

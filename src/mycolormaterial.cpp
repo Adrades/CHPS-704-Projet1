@@ -2,7 +2,7 @@
 
 myColorMaterial::myColorMaterial(const QVector4D &col)
 {
-    initShader("./data/");
+    initShader("./data/color/");
     myColor = col;
 }
 
